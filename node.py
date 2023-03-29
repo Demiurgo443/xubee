@@ -20,3 +20,18 @@ class Node:
     def set_operation(self, parents, op=None):
         self.op = op
         self.parents = parents
+
+    def run(self, node_list: dict) -> bool:
+        if hasattr(self, "parents"):
+            if self.op is not None:
+                p1 = node_list[self.parents[0][0]].run(node_list)
+                if self.parents[0][1]:
+                    p1 = not p1
+                p2 = node_list[self.parents[1][0]].run(node_list)
+                if self.parents[1][1]:
+                    p2 = (not p2)
+                self.value = (p1 and p2) if self.op else (p1 ^ p2)
+            else:
+                self.value = (not node_list[self.parents[0]].run(node_list)) if self.parents[1] else node_list[
+                    self.parents[0]].run(node_list)
+        return self.value
