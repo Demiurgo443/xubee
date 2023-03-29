@@ -7,3 +7,15 @@ if __name__ == '__main__':
     truth_table = {}
     truth_table_2 = {}
     error_list = {}
+
+    # makes this program launchable with bash scripts
+    # filename = sys.argv[1]
+
+    # TODO sobstitute "e_pla_6i_1.v_opt.v" with filename variable when program is finished
+
+    # xag, nodes_of_interest = parser("verilogs/x7dn.v_opt.v")
+    # xag2, nodes_of_interest2 = parser("verilogs/x7dn.v_opt.v")
+    # xag, nodes_of_interest = parser("verilogs/e_pla_4i_5_xor.v_opt.v")
+    # xag2, nodes_of_interest2 = parser("verilogs/e_pla_4i_5_xor.v_opt.v")
+    xag, nodes_of_interest = parser("verilogs/e_pla_6i_1.v_opt.v")
+    xag2, nodes_of_interest2 = parser("verilogs/e_pla_6i_1.v_opt.v")
