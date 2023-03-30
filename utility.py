@@ -78,10 +78,15 @@ def parser(file_name: str) -> tuple[Graph, list[str]]:
                     if parent1.startswith("x") and parent2.startswith("x"):
                         interest_list.append(node_id)
 
-        # dei nodi di interesse del primo layer, si vanno a escludere quelli che hanno più di un figlio
+        # dei nodi di interesse del primo layer, si vanno a escludere quelli che sono XOR
+        # quelli che hanno più di un figlio e che sono AND
+        # o s
         start_length = len(interest_list)
         for i in range(start_length):
-            if len(node_list[interest_list[start_length-i-1]].children) != 1:
+            if node_list[interest_list[start_length - i - 1]].op == 0:
+                interest_list.remove(interest_list[start_length - i - 1])
+            elif (len(node_list[interest_list[start_length-i-1]].children) != 1) and \
+                    (node_list[interest_list[start_length-i-1]].op == 1):
                 interest_list.remove(interest_list[start_length-i-1])
 
     return Graph(input_list, internal_list, output_list, node_list), interest_list
