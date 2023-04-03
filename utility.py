@@ -90,3 +90,37 @@ def parser(file_name: str) -> tuple[Graph, list[str]]:
                 interest_list.remove(interest_list[start_length-i-1])
 
     return Graph(input_list, internal_list, output_list, node_list), interest_list
+
+
+def visualizer():
+    pass
+
+
+def to_file(filename: str, xag, estimated_e_dict: dict, exact_e_dict: dict):
+    filename = filename.removesuffix(".v_opt.v").replace("_", "\\_")
+    num_and_nodes = 0
+
+    for and_node_id in xag.internal_nodes:
+        if xag.nodes[and_node_id].op == 1:
+            num_and_nodes += 1
+
+    minval_estimated = min(estimated_e_dict.values())
+    res = list(filter(lambda x: estimated_e_dict[x] == minval_estimated, estimated_e_dict))
+    correspondence_eexact_found = []
+    for el in res:
+        value_found = [val for key, val in exact_e_dict.items() if key == el]
+        correspondence_eexact_found.append(value_found[0])
+    min_exact_error = min(correspondence_eexact_found)
+    max_exact_error = max(correspondence_eexact_found)
+
+    # TODO capire se "nodi interessanti" siano quelli con errore stimato minimo
+    #  o semplicemente quelli che passano selezione
+    #with open("morte.txt", "a") as f_res:
+    with open("results.txt", "a") as f_res:
+        table_row = f"{filename}\t& {len(estimated_e_dict)}\t& " \
+                    f"{'{:.2f}'.format((len(estimated_e_dict) / len(xag.internal_nodes)) * 100)}\\%\t& " \
+                    f"{minval_estimated}\t& " \
+                    f"{min_exact_error}\t& {max_exact_error}\t& {minval_estimated - min_exact_error}\t& " \
+                    f"{minval_estimated - max_exact_error}\t& {'{:.3f}'.format((1 / num_and_nodes) * 100)}\\%\t\\\\\n"
+        f_res.write(table_row)
+    pass
