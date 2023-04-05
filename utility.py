@@ -1,5 +1,6 @@
 from node import Node
 from graph import Graph
+from time import perf_counter
 
 
 def parser(file_name: str) -> tuple[Graph, list[str]]:
@@ -96,7 +97,7 @@ def visualizer():
     pass
 
 
-def to_file(filename: str, xag, estimated_e_dict: dict, exact_e_dict: dict):
+def to_file(filename: str, xag, estimated_e_dict: dict, exact_e_dict: dict, f_elapsed_time: float, tt_elapsed_time: float):
     filename = filename.removesuffix(".v_opt.v").replace("_", "\\_")
     num_and_nodes = 0
 
@@ -113,14 +114,30 @@ def to_file(filename: str, xag, estimated_e_dict: dict, exact_e_dict: dict):
     min_exact_error = min(correspondence_eexact_found)
     max_exact_error = max(correspondence_eexact_found)
 
-    # TODO capire se "nodi interessanti" siano quelli con errore stimato minimo
-    #  o semplicemente quelli che passano selezione
-    #with open("morte.txt", "a") as f_res:
+    # PENULTIMA RIGA -> quando calcoli i tempi, ricordati di inserire & dopo \t. In mod. normale togli & e metti \\\\\n
     with open("results.txt", "a") as f_res:
         table_row = f"{filename}\t& {len(estimated_e_dict)}\t& " \
                     f"{'{:.2f}'.format((len(estimated_e_dict) / len(xag.internal_nodes)) * 100)}\\%\t& " \
                     f"{minval_estimated}\t& " \
                     f"{min_exact_error}\t& {max_exact_error}\t& {minval_estimated - min_exact_error}\t& " \
-                    f"{minval_estimated - max_exact_error}\t& {'{:.3f}'.format((1 / num_and_nodes) * 100)}\\%\t\\\\\n"
+                    f"{minval_estimated - max_exact_error}\t& {'{:.3f}'.format((1 / num_and_nodes) * 100)}\\%\t&  "\
+                    f"{((f_elapsed_time-tt_elapsed_time)*1000):.2f}ms\t& {f_elapsed_time:.2f}s\t\\\\\n"
         f_res.write(table_row)
-    pass
+
+
+class Timer:
+    def __init__(self):
+        self._start_time = None
+        self._end_time = None
+
+    def start(self):
+        if self._end_time is not None:
+            self._end_time = None
+        self._start_time = perf_counter()
+
+    def stop(self):
+        if (self._start_time is not None) and (self._end_time is None):
+            self._end_time = perf_counter()
+
+    def elapsed_time(self):
+        return self._end_time - self._start_time
