@@ -1,25 +1,39 @@
-# from graph import Graph
+from graph import Graph
 from deepdiff import DeepDiff
+from utility import Timer
 
 
-def error_estimation(xag, nodes_of_interest: list, truth_table: dict, truth_table_2: dict)-> tuple[dict, dict, dict, dict]:
-    # TODO se sposti tutto in mini funzioni dedicate, puoi evitare di passare truth table 1 e 2. Definisci qua.
+def error_estimation(xag: Graph, xag2: Graph, nodes_of_interest: list)-> tuple[dict, dict, float, float]:
+    function_timer = Timer()
+    truth_table1_timer = Timer()
+    truth_table2_timer = Timer()
 
+    elapsed_time_truth_tables = 0
+    function_timer.start()
+    truth_table = {}
+    truth_table_2 = {}
     estimated_error_dict = {}
     exact_error_dict = {}
+
+    truth_table1_timer.start()
     max_num = 2 ** xag.input_num
     for val in range(max_num):
-        truth_table = xag.run_input(val, truth_table)
+        truth_table = xag2.run_input(val, truth_table)
+    truth_table1_timer.stop()
+    elapsed_time_truth_tables += truth_table1_timer.elapsed_time()
 
     for inode in nodes_of_interest:
-        estimated_error = 0
         xag.set_change(inode)
 
+        truth_table2_timer.start()
         for val in range(max_num):
             truth_table_2 = xag.run_input(val, truth_table_2)
 
         ddiff = DeepDiff(truth_table, truth_table_2)
+
         exact_error = len(ddiff.affected_root_keys)
+        truth_table2_timer.stop()
+        elapsed_time_truth_tables += truth_table2_timer.elapsed_time()
 
         # nodo successivo a quello modificato è AND e ha più figli
         # -> qua valuto direttamente l'errore perché rischierei di valutare solo un ramo in cui si è propagato
@@ -276,27 +290,43 @@ def error_estimation(xag, nodes_of_interest: list, truth_table: dict, truth_tabl
                         print(
                             f"STOP. Il nodo {inode} non viene considerato per la stima. Sei incappato in radice")
                         xag.set_change(inode)
-    return truth_table, truth_table_2, estimated_error_dict, exact_error_dict
+    function_timer.stop()
+    # elapsed_time = function_timer.elapsed_time - elapsed_time_truth_tables
+    return estimated_error_dict, exact_error_dict, function_timer.elapsed_time(), elapsed_time_truth_tables
 
 
-def error_estimation_4i(xag, nodes_of_interest: list, truth_table: dict, truth_table_2: dict) -> tuple[dict, dict, dict, dict]:
-    # TODO se sposti tutto in mini funzioni dedicate, puoi evitare di passare truth table 1 e 2. Definisci qua.
+def error_estimation_4i(xag: Graph, xag2: Graph, nodes_of_interest: list) -> tuple[dict, dict, float, float]:
+    function_timer = Timer()
+    truth_table1_timer = Timer()
+    truth_table2_timer = Timer()
 
+    elapsed_time_truth_tables = 0
+    function_timer.start()
+
+    truth_table = {}
+    truth_table_2 = {}
     estimated_error_dict = {}
     exact_error_dict = {}
+
+    truth_table1_timer.start()
     max_num = 2 ** xag.input_num
     for val in range(max_num):
-        truth_table = xag.run_input(val, truth_table)
+        truth_table = xag2.run_input(val, truth_table)
+    truth_table1_timer.stop()
+    elapsed_time_truth_tables += truth_table1_timer.elapsed_time()
 
     for inode in nodes_of_interest:
         estimated_error = 0
         xag.set_change(inode)
 
+        truth_table2_timer.start()
         for val in range(max_num):
             truth_table_2 = xag.run_input(val, truth_table_2)
 
         ddiff = DeepDiff(truth_table, truth_table_2)
         exact_error = len(ddiff.affected_root_keys)
+        truth_table2_timer.stop()
+        elapsed_time_truth_tables += truth_table2_timer.elapsed_time()
 
         # nodo successivo a quello modificato è AND e ha più figli
         # -> qua valuto direttamente l'errore perché rischierei di valutare solo un ramo in cui si è propagato
@@ -399,8 +429,8 @@ def error_estimation_4i(xag, nodes_of_interest: list, truth_table: dict, truth_t
                     estimated_error_dict[inode] = estimated_error
                     exact_error_dict[inode] = exact_error
                     xag.set_change(inode)
-
-    return truth_table, truth_table_2, estimated_error_dict, exact_error_dict
+    function_timer.stop()
+    return estimated_error_dict, exact_error_dict, function_timer.elapsed_time(), elapsed_time_truth_tables
 
 
 def error_estimation_3(xag, nodes_of_interest: list, truth_table: dict, truth_table_2: dict)-> tuple[dict, dict, dict, dict]:
