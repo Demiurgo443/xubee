@@ -81,7 +81,6 @@ def parser(file_name: str) -> tuple[Graph, list[str]]:
 
         # dei nodi di interesse del primo layer, si vanno a escludere quelli che sono XOR
         # quelli che hanno più di un figlio e che sono AND
-        # o s
         start_length = len(interest_list)
         for i in range(start_length):
             if node_list[interest_list[start_length - i - 1]].op == 0:
