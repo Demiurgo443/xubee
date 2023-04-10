@@ -8,7 +8,7 @@ do
 # Check if "$ff" FILE exists and is a regular file and then execute xubee #
   if [ -f "$ff" ]
   then
-    echo "Processing $(basename "$ff") file..."
+    # echo "Processing $(basename "$ff") file..."
     python main.py "$ff" #| tee -a log.txt #remove comment to have a more detailed log stored as a file
   else
     echo "Warning: Some problem with \"$ff\""
