@@ -1,0 +1,1 @@
+Put inside this directory all verilog files you want to be parsed.
