@@ -1,4 +1,4 @@
-# Xag Upper Bound Error Estimation
+# Xag Error Estimation
 
 import sys
 from utility import parser, to_file
@@ -15,30 +15,30 @@ if __name__ == '__main__':
     xag2, nodes_of_interest = parser(f"{filename}")
     xag = deepcopy(xag2)
 
-    filename = filename.removeprefix("/home/davide/PycharmProjects/xubee/verilogs/")
+    filename = filename.removeprefix("/YOUR/ABSOLUTE/PATH/TO/VERILOG/FILES/")
 
     print("--------------------------------------------------------------------")
-    print(f"|                   Analizzando {filename}                      |")
+    print(f"|                   Analyzing {filename}                       |")
     print("--------------------------------------------------------------------")
 
     if len(nodes_of_interest) == 0:
-        print("Nessun nodo ha soddisfatto i criteri di selezione\n")
+        print("No node has passed selection criteria.\n")
     else:
         if xag2.input_num == 4:
             estimated_e_dict, exact_e_dict, f_elapsed_time, tt_elapsed_time = error_estimation_4i(xag2, xag,
                                                                                                   nodes_of_interest)
             if len(estimated_e_dict) == 0 and len(exact_e_dict) == 0:
-                print("Nessun nodo adatto trovato in fase di stima dell'errore")
+                print("No suitable node found during error estimation phase.")
             else:
-                print(f"Errori stimati: {estimated_e_dict}")
-                print(f"Errori esatti: {exact_e_dict}")
+                print(f"Estimated errors: {estimated_e_dict}")
+                print(f"Exact errors: {exact_e_dict}")
                 to_file(filename, xag, estimated_e_dict, exact_e_dict, f_elapsed_time, tt_elapsed_time)
         else:
             estimated_e_dict, exact_e_dict, f_elapsed_time, tt_elapsed_time = error_estimation(xag2, xag,
                                                                                                nodes_of_interest)
             if len(estimated_e_dict) == 0 and len(exact_e_dict) == 0:
-                print("Nessun nodo adatto trovato in fase di stima dell'errore")
+                print("No suitable node found during error estimation phase.")
             else:
-                print(f"Errori stimati: {estimated_e_dict}")
-                print(f"Errori esatti: {exact_e_dict}")
+                print(f"Estimated errors: {estimated_e_dict}")
+                print(f"Exact errors: {exact_e_dict}")
                 to_file(filename, xag, estimated_e_dict, exact_e_dict, f_elapsed_time, tt_elapsed_time)
