@@ -4,7 +4,7 @@ from filecmp import cmp, clear_cache
 
 def pla_generator():
     input_num = int(input("How many input variables does the function have? "))
-    pla_num = int(input("How much different pla do you want? "))
+    pla_num = int(input("How many different PLAs do you want? "))
     for i in range(pla_num):
         actual_number = i+1
         with open(f"pla/pla_{input_num:02d}i_{actual_number:03d}.pla", "w") as f:
